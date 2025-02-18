@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IProduct } from "../Interfaces/books";
 import { scrapeAllBooksMinMaxPage } from "../services/books.to.scrape";
 import { BadRequestError } from "../errors/BadRequestError";
-import { getTotalPages } from "../services/get.total.pages";
+import { getTotalPages } from "../services/get.total.pages.by.pages";
 
 export async function fetchBookHandler(req: Request, res: Response) {
   const from = parseInt(req.query.from as string, 10);

@@ -3,7 +3,8 @@ import { IProduct } from "../Interfaces/books";
 import { BadRequestError } from "../errors/BadRequestError";
 import { scrapeAllQuotesMinMaxPage } from "../services/quotes.to.scrape";
 import { IQuote } from "../Interfaces/quotes";
-import { getTotalPages } from "../services/get.total.pages";
+import { getTotalPages } from "../services/get.total.pages.by.pages";
+import { getTotalPagesByNextButton } from "../services/get.total.pages.by.next.button";
 
 export async function fetchQuotesHandler(req: Request, res: Response) {
   const from = parseInt(req.query.from as string, 10);
@@ -12,8 +13,8 @@ export async function fetchQuotesHandler(req: Request, res: Response) {
   const homePageUrl: string = "https://quotes.toscrape.com/";
 
   if (!from && !to) {
-    const nrPages = (await getTotalPages(homePageUrl)) ?? 1;
-    quotes = await scrapeAllQuotesMinMaxPage(1, 5);
+    const nrPages = (await getTotalPagesByNextButton(homePageUrl)) ?? 1;
+    quotes = await scrapeAllQuotesMinMaxPage(1, nrPages);
     res.status(200).json(quotes);
     return;
   } else {
