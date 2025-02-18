@@ -1,6 +1,4 @@
-import { Request, Response, Router } from "express";
-import { fetchBookHandler } from "../controllers/book.controller";
-import { BadRequestError } from "../errors/BadRequestError";
+import { Router } from "express";
 import { fetchQuotesHandler } from "../controllers/quotes.controller";
 
 const quotesRouter = Router();
