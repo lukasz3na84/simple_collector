@@ -3,8 +3,8 @@ import { IProduct } from "../Interfaces/books";
 import { BadRequestError } from "../errors/BadRequestError";
 import { scrapeAllQuotesMinMaxPage } from "../services/quotes.to.scrape";
 import { IQuote } from "../Interfaces/quotes";
-import { getTotalPages } from "../services/get.total.pages.by.pages";
-import { getTotalPagesByNextButton } from "../services/get.total.pages.by.next.button";
+import { getTotalPages } from "../services/utils/get.total.pages.by.pages";
+import { getTotalPagesByNextButton } from "../services/utils/get.total.pages.by.next.button";
 
 export async function fetchQuotesHandler(req: Request, res: Response) {
   const from = parseInt(req.query.from as string, 10);

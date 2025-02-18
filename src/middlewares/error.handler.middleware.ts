@@ -7,7 +7,7 @@ export function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  console.error(err.message); // Logowanie błędu do konsoli
+  console.error(err.message);
   if (err instanceof CustomError) {
     res.status(err.statusCode).json({ message: err.message });
     return;
