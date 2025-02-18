@@ -1,49 +1,48 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { IProduct } from "../Interfaces/books";
 import { getRedisClient } from "../utils/reddis.connection";
+import { IQuote } from "../Interfaces/quotes";
 
-export async function scrapeBooksPage(pageUrl: string): Promise<IProduct[]> {
+export async function scrapeQuotesPage(pageUrl: string): Promise<IQuote[]> {
   try {
     const { data } = await axios.get(pageUrl);
     const $ = cheerio.load(data);
-    const books: IProduct[] = [];
+    const quotes: IQuote[] = [];
 
-    // Każdy produkt na stronie ma klasę .product_pod
-    $(".product_pod").each((i, elem) => {
-      const title = $(elem).find("h3 a").attr("title")?.trim();
-      const price = $(elem).find(".price_color").text().trim();
-      books.push({ title, price });
+    $(".quote").each((i, elem) => {
+      const quote = $(elem).find(".text").text().trim(); // Pobiera tylko cytat
+      const author = $(elem).find(".author").text().trim(); // Pobiera autora
+      quotes.push({ quote, author });
     });
-    return books;
+    return quotes;
   } catch (error: any) {
     console.error(`Błąd podczas pobierania strony ${pageUrl}:`, error.message);
     return [];
   }
 }
 
-export async function scrapeAllBooksMinMaxPage(
+export async function scrapeAllQuotesMinMaxPage(
   min: number,
   max: number
-): Promise<IProduct[]> {
-  const baseUrl = "http://books.toscrape.com/catalogue/page-";
-  const allBooks: IProduct[] = [];
+): Promise<IQuote[]> {
+  const baseUrl = "https://quotes.toscrape.com/page/";
+  const allBooks: IQuote[] = [];
   const redis = await getRedisClient();
 
   for (let page = min; page <= max; page++) {
-    const url = `${baseUrl}${page}.html`;
+    const url = `${baseUrl}${page}/`;
     console.log(`Pobieranie danych ze strony: ${url}`);
 
     try {
-      const cachedData = await redis.get(`books:${url}`);
+      const cachedData = await redis.get(`quotes:${url}`);
       if (cachedData) {
         console.log(`Załadowano z cache: ${url}`);
         allBooks.push(...JSON.parse(cachedData));
         continue;
       }
       // Pobranie danych i zapis do cache
-      const books = await scrapeBooksPage(url);
-      await redis.set(`books:${url}`, JSON.stringify(books), { EX: 60 }); // Cache na 1min
+      const books = await scrapeQuotesPage(url);
+      await redis.set(`quotes:${url}`, JSON.stringify(books), { EX: 60 }); // Cache na 1min
       allBooks.push(...books);
     } catch (error) {
       console.error(`Błąd przy pobieraniu strony ${url}:`, error);
