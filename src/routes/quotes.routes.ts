@@ -1,9 +1,9 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import { fetchQuotesHandler } from "../controllers/quotes.controller";
 
 const quotesRouter = Router();
 
-quotesRouter.get('/', (req, res) => {
+quotesRouter.get('/', (req: Request, res: Response) => {
   res.send('Hello world');
 });
 

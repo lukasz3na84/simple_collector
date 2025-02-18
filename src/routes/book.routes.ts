@@ -1,10 +1,10 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import { fetchBookHandler } from "../controllers/book.controller";
 import { BadRequestError } from "../errors/BadRequestError";
 
 const bookRouter = Router();
 
-bookRouter.get('/', (req, res) => {
+bookRouter.get('/', (req: Request, res: Response) => {
   res.send('Hello world');
 });
 
